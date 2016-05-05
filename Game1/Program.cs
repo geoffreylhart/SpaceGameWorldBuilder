@@ -1,6 +1,7 @@
 ﻿using System;
 
 // hello Geoffrey!
+// hello back, tablet!
 
 namespace Game1
 {
