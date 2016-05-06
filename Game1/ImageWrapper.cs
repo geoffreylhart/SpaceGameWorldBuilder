@@ -11,11 +11,14 @@ namespace Game1
     class ImageWrapper
     {
         private Texture2D texture;
-        Rectangle rect;
+        float x, y, w, h;
 
-        public ImageWrapper(GraphicsDevice graphicsDevice, string file, int x, int y, int w, int h)
+        public ImageWrapper(GraphicsDevice graphicsDevice, string file, float x, float y, float w, float h)
         {
-            rect = new Rectangle(x, y, w, h);
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
             using (var reader = File.OpenRead(file))
             {
                 texture = Texture2D.FromStream(graphicsDevice, reader);
@@ -28,11 +31,14 @@ namespace Game1
             using (var batch = new SpriteBatch(graphicsDevice))
             {
                 batch.Begin(0, null, null, null, null, basicEffect);
-                batch.Draw(texture, rect, Color.White);
+                batch.Draw(texture, new Vector2(x, y), null, null, null, 0, new Vector2(w/texture.Width, h/texture.Height), Color.White);
                 batch.End();
             }
 
             basicEffect.TextureEnabled = false;
         }
+
+        public float Width { get { return w; } }
+        public float Height { get { return h; } }
     }
 }

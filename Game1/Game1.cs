@@ -11,6 +11,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         List<ImageWrapper> imageWrappers = new List<ImageWrapper>();
+        ImageWrapper mainMapWrapper;
         float cameraSpeed;
         Vector3 cameraOffset, cameraVelocity;
         double scale = 1;
@@ -31,7 +32,8 @@ namespace Game1
             graphics.ApplyChanges();
 
             // add basic world background
-            imageWrappers.Add(new ImageWrapper(GraphicsDevice, @"..\..\..\earth\global.png", 0, 0, size, size));
+            mainMapWrapper = new ImageWrapper(GraphicsDevice, @"..\..\..\earth\global.png", 0, 0, size, size);
+            imageWrappers.Add(mainMapWrapper);
 
             // camera settings
             cameraOffset = Vector3.Zero;
@@ -58,6 +60,7 @@ namespace Game1
         }
 
         private static int prevScrollWheelValue;
+        private static ButtonState prevLeftState;
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -96,6 +99,20 @@ namespace Game1
             diff -= GraphicsDevice.Viewport.Unproject(pivotPoint, projectionMatrix, viewMatrix, worldMatrix);
             cameraOffset -= diff;
             worldMatrix = Matrix.CreateTranslation(cameraOffset) * Matrix.CreateScale((float)scale); // redo this step after the change
+
+            if(mouseState.LeftButton == ButtonState.Pressed && prevLeftState == ButtonState.Released)
+            {
+                Vector3 imageCoord = GraphicsDevice.Viewport.Unproject(new Vector3(mouseState.X, mouseState.Y, 0), projectionMatrix, viewMatrix, worldMatrix); // position according to image coordinates
+                double longitude = (imageCoord.X/mainMapWrapper.Width - 0.5)* 360;
+                double latitude = ToLat(imageCoord.Y / mainMapWrapper.Height)*-180/Math.PI;
+                int zoom = (int)Math.Max(Math.Floor(Math.Log(scale)/Math.Log(2)+2),0);
+                String fileName = @"..\..\..\earth\"+longitude+"+"+latitude+"+"+zoom+".png";
+                GoogleMaps.DownloadMap(latitude, longitude, zoom, fileName);
+                float newWidth = (float)(mainMapWrapper.Width/Math.Pow(2,zoom));
+                float newHeight = (float)(mainMapWrapper.Height/Math.Pow(2,zoom));
+                imageWrappers.Add(new ImageWrapper(GraphicsDevice, fileName, imageCoord.X-newWidth/2, imageCoord.Y-newHeight/2, newWidth, newHeight));
+            }
+            prevLeftState = mouseState.LeftButton;
             base.Update(gameTime);
         }
 
@@ -112,6 +129,11 @@ namespace Game1
                 image.Draw(GraphicsDevice, basicEffect);
             }
             base.Draw(gameTime);
+        }
+
+        private static double ToLat(double y)
+        {
+            return 2 * Math.Atan(Math.Pow(Math.E, (y - 0.5) * 2 * Math.PI)) - Math.PI / 2;
         }
     }
 }
