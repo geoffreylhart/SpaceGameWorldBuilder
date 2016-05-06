@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Game1
 {
@@ -34,6 +35,22 @@ namespace Game1
             // add basic world background
             mainMapWrapper = new ImageWrapper(GraphicsDevice, @"..\..\..\earth\global.png", 0, 0, size, size);
             imageWrappers.Add(mainMapWrapper);
+
+            // load previously saved bgs
+            foreach (string file in Directory.EnumerateFiles(@"..\..\..\earth"))
+            {
+                if (!file.Contains("global"))
+                {
+                    String[] split = file.Split(new []{'+'});
+                    double longitude = (double.Parse(split[0].Substring(15))/360+0.5)*size;
+                    double latitude = (1-ToY(double.Parse(split[1])*Math.PI/180))*size;
+                    int zoom = int.Parse(split[2].Substring(0, split[2].Length-4));
+                    float newWidth = (float)(mainMapWrapper.Width / Math.Pow(2, zoom));
+                    float newHeight = (float)(mainMapWrapper.Height / Math.Pow(2, zoom));
+                    imageWrappers.Add(new ImageWrapper(GraphicsDevice, file, (float)longitude - newWidth / 2, (float)latitude - newHeight / 2, newWidth, newHeight));
+                }
+            }
+            imageWrappers.Sort((x,y)=>y.Width.CompareTo(x.Width));
 
             // camera settings
             cameraOffset = Vector3.Zero;
@@ -133,7 +150,12 @@ namespace Game1
 
         private static double ToLat(double y)
         {
-            return 2 * Math.Atan(Math.Pow(Math.E, (y - 0.5) * 2 * Math.PI)) - Math.PI / 2;
+            return 2 * Math.Atan(Math.Pow(Math.E, (y-0.5)*2*Math.PI)) - Math.PI / 2;
+        }
+
+        private static double ToY(double lat)
+        {
+            return Math.Log(Math.Tan(lat / 2 + Math.PI / 4)) / (Math.PI * 2) + 0.5;
         }
     }
 }
