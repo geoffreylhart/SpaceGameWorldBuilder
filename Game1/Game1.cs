@@ -24,7 +24,7 @@ namespace Game1
         }
         protected override void Initialize()
         {
-            int size = 1024;
+            int size = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height*2/3;
             // change size
             graphics.PreferredBackBufferWidth = size;  // set this value to the desired width of your window
             graphics.PreferredBackBufferHeight = size;   // set this value to the desired height of your window
