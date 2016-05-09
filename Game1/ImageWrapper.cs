@@ -10,23 +10,28 @@ namespace Game1
 {
     class ImageWrapper
     {
-        private Texture2D texture;
+        private Texture2D texture = null;
         float x, y, w, h;
+        private String file;
 
-        public ImageWrapper(GraphicsDevice graphicsDevice, string file, float x, float y, float w, float h)
+        public ImageWrapper(string file, float x, float y, float w, float h)
         {
             this.x = x;
             this.y = y;
             this.w = w;
             this.h = h;
-            using (var reader = File.OpenRead(file))
-            {
-                texture = Texture2D.FromStream(graphicsDevice, reader);
-            }
+            this.file = file;
         }
 
         internal void Draw(GraphicsDevice graphicsDevice, BasicEffect basicEffect)
         {
+            if(texture == null)
+            {
+                using (var reader = File.OpenRead(file))
+                {
+                    texture = Texture2D.FromStream(graphicsDevice, reader);
+                }
+            }
             basicEffect.TextureEnabled = true;
             using (var batch = new SpriteBatch(graphicsDevice))
             {
