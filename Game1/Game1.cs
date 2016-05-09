@@ -13,6 +13,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         IModule[] modules = new IModule[] { new GoogleMapSampler(), new FractalDrawer() };
+        int moduleSelected = 0;
         float cameraSpeed;
         Vector3 cameraOffset, cameraVelocity;
         double scale = 1;
@@ -62,6 +63,7 @@ namespace Game1
         }
 
         private static int prevScrollWheelValue;
+        private static KeyboardState prevKeyState;
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -102,24 +104,45 @@ namespace Game1
             worldMatrix = Matrix.CreateTranslation(cameraOffset) * Matrix.CreateScale((float)(scale * size)); // redo this step after the change
 
             Vector3 imageCoord = GraphicsDevice.Viewport.Unproject(new Vector3(mouseState.X, mouseState.Y, 0), projectionMatrix, viewMatrix, worldMatrix); // position according to image coordinates
-            foreach(IModule module in modules)
+            modules[moduleSelected].Update(imageCoord, scale);
+
+            if (prevKeyState.IsKeyDown(Keys.Tab) && !keyState.IsKeyDown(Keys.Tab))
             {
-                module.Update(imageCoord, scale);
+                moduleSelected++;
+                moduleSelected %= modules.Length;
             }
+            prevKeyState = keyState;
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             BasicEffect basicEffect = new BasicEffect(GraphicsDevice);
             basicEffect.View = viewMatrix;
             basicEffect.Projection = projectionMatrix;
             basicEffect.World = worldMatrix;
-            basicEffect.VertexColorEnabled = true;
-            foreach(IModule module in modules)
+            foreach (IModule module in modules)
             {
                 module.Draw(GraphicsDevice, basicEffect);
+            }
+            int iconSize = size / 20;
+            int iconSpacing = size / 100;
+            BasicEffect iconEffect = new BasicEffect(GraphicsDevice);
+            iconEffect.View = viewMatrix;
+            iconEffect.Projection = projectionMatrix;
+            iconEffect.World = Matrix.Identity;
+            iconEffect.TextureEnabled = true;
+            iconEffect.VertexColorEnabled = true;
+            using (var batch = new SpriteBatch(GraphicsDevice))
+            {
+                for (int i = 0; i < modules.Length; i++)
+                {
+                    batch.Begin(0, null, null, null, null, iconEffect);
+                    Rectangle rect = new Rectangle(iconSpacing+(iconSpacing+iconSize)*i, iconSpacing, iconSize, iconSize);
+                    batch.Draw(modules[i].GetIconTexture(), rect, (i == moduleSelected) ? new Color(255, 160, 160) : Color.White);
+                    batch.End();
+                }
             }
             base.Draw(gameTime);
         }

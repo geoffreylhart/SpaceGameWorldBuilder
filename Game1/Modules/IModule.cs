@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -22,5 +23,10 @@ namespace Game1.Modules
         internal abstract void Draw(GraphicsDevice GraphicsDevice, BasicEffect basicEffect);
 
         internal abstract void Update(Vector3 relMousePos, double scale);
+
+        internal Texture2D GetIconTexture()
+        {
+            return iconTexture;
+        }
     }
 }
