@@ -13,6 +13,7 @@ namespace Game1.Modules
     class FractalDrawer : IModule
     {
         List<Line> lines = new List<Line>();
+        HashSet<Point2D> points = new HashSet<Point2D>();
         Point2D creating = null;
         Point2D lastMousePos = null;
 
@@ -45,13 +46,26 @@ namespace Game1.Modules
             MouseState mouseState = Mouse.GetState();
             if (prevLeftState.Equals(ButtonState.Pressed) && mouseState.LeftButton.Equals(ButtonState.Released))
             {
+                Point2D newPoint = new Point2D(relMousePos);
+                double minDist = double.MaxValue;
+                foreach (Point2D point in points)
+                {
+                    double dist = Vector3.Distance(newPoint.pos, point.pos)*scale;
+                    if (dist < 0.03 && dist < minDist)
+                    {
+                        minDist = dist;
+                        newPoint = point;
+                    }
+                }
                 if (creating == null)
                 {
-                    creating = new Point2D(relMousePos);
+                    creating = newPoint;
                 }
                 else
                 {
-                    lines.Add(new Line(creating, new Point2D(relMousePos)));
+                    points.Add(creating);
+                    points.Add(newPoint);
+                    lines.Add(new Line(creating, newPoint));
                     creating = null;
                 }
             }
