@@ -14,5 +14,15 @@ namespace Game1.Geom
         {
             this.pos = pos;
         }
+
+        internal void Draw(GraphicsDevice graphicsDevice, BasicEffect basicEffect, Color color)
+        {
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                VertexPositionColor[] points = new VertexPositionColor[] { new VertexPositionColor(p1.pos, color), new VertexPositionColor(p2.pos, color) };
+                graphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, points, 0, 1);
+            }
+        }
     }
 }

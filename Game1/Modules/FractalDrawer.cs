@@ -33,6 +33,10 @@ namespace Game1.Modules
             foreach(Line line in lines){
                 line.Draw(graphicsDevice, basicEffect, Color.White);
             }
+            foreach (Point2D point in points)
+            {
+                point.Draw(graphicsDevice, basicEffect, Color.White);
+            }
             if (creating != null && lastMousePos != null)
             {
                 new Line(creating, lastMousePos).Draw(graphicsDevice, basicEffect, Color.Red);
