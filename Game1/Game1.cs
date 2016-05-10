@@ -13,7 +13,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         IModule[] modules = new IModule[] { new GoogleMapSampler(), new FractalDrawer() };
-        int moduleSelected = 0;
+        int moduleSelected = 1;
         float cameraSpeed;
         Vector3 cameraOffset, cameraVelocity;
         double scale = 1;

@@ -39,6 +39,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Game1.cs" />
+    <Compile Include="Geom\Line.cs" />
+    <Compile Include="Geom\Point2D.cs" />
     <Compile Include="GoogleMaps.cs" />
     <Compile Include="ImageWrapper.cs" />
     <Compile Include="Modules\FractalDrawer.cs" />
