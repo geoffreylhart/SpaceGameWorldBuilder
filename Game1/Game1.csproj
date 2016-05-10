@@ -56,6 +56,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\icons\geom.png" />
+    <Content Include="Content\icons\gmap.png" />
     <Content Include="earth\global.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>

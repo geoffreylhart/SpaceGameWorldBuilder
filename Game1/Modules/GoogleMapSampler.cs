@@ -32,7 +32,7 @@ namespace Game1.Modules
             // load previously saved bgs
             foreach (string file in Directory.EnumerateFiles(@"..\..\..\earth"))
             {
-                if (!file.Contains("global"))
+                if (!file.Contains("global") && file.EndsWith(".png"))
                 {
                     String[] split = file.Split(new[] { '+' });
                     double longitude = (double.Parse(split[0].Substring(15)) / 360 + 0.5);
