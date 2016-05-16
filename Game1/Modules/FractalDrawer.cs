@@ -35,8 +35,9 @@ namespace Game1.Modules
             }
             foreach (Point2D point in points)
             {
-                point.Draw(graphicsDevice, basicEffect, Color.White);
+                point.Draw(graphicsDevice, basicEffect, (point == lastMousePos)?Color.Red:Color.White);
             }
+            if (creating != null) creating.Draw(graphicsDevice, basicEffect, Color.Red);
             if (creating != null && lastMousePos != null)
             {
                 new Line(creating, lastMousePos).Draw(graphicsDevice, basicEffect, Color.Red);
@@ -50,31 +51,30 @@ namespace Game1.Modules
             MouseState mouseState = Mouse.GetState();
             if (prevLeftState.Equals(ButtonState.Pressed) && mouseState.LeftButton.Equals(ButtonState.Released))
             {
-                Point2D newPoint = new Point2D(relMousePos);
-                double minDist = double.MaxValue;
-                foreach (Point2D point in points)
-                {
-                    double dist = Vector3.Distance(newPoint.pos, point.pos)*scale;
-                    if (dist < 0.03 && dist < minDist)
-                    {
-                        minDist = dist;
-                        newPoint = point;
-                    }
-                }
                 if (creating == null)
                 {
-                    creating = newPoint;
+                    creating = lastMousePos;
                 }
                 else
                 {
                     points.Add(creating);
-                    points.Add(newPoint);
-                    lines.Add(new Line(creating, newPoint));
+                    points.Add(lastMousePos);
+                    lines.Add(new Line(creating, lastMousePos));
                     creating = null;
                 }
             }
             prevLeftState = mouseState.LeftButton;
             lastMousePos = new Point2D(relMousePos);
+            double minDist = double.MaxValue;
+            foreach (Point2D point in points)
+            {
+                double dist = Vector3.Distance(lastMousePos.pos, point.pos) * scale;
+                if (dist < 0.03 && dist < minDist)
+                {
+                    minDist = dist;
+                    lastMousePos = point;
+                }
+            }
         }
     }
 }

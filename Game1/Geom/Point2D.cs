@@ -23,6 +23,7 @@ namespace Game1.Geom
             Vector3 relToScreen = graphicsDevice.Viewport.Project(pos, basicEffect.Projection, basicEffect.View, basicEffect.World);
             BasicEffect screenSpace = new BasicEffect(graphicsDevice);
             screenSpace.TextureEnabled = true;
+            screenSpace.VertexColorEnabled = true;
             screenSpace.View = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 1.0f), Vector3.Zero, Vector3.Up);
             screenSpace.Projection = Matrix.CreateOrthographicOffCenter(0, (float)graphicsDevice.Viewport.Width, (float)graphicsDevice.Viewport.Height, 0, 1.0f, 1000.0f);
             screenSpace.World = Matrix.Identity;
