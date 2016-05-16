@@ -38,7 +38,7 @@ namespace Game1.Modules
             {
                 point.Draw(graphicsDevice, basicEffect, (point == lastMousePos)?Color.Red:Color.White);
             }
-            if (creating != null) creating.Draw(graphicsDevice, basicEffect, Color.Red);
+            if (creating != null) creating.Draw(graphicsDevice, basicEffect, (creating == lastMousePos)?Color.Cyan:Color.Red);
             if (creating != null && lastMousePos != null)
             {
                 new Line(creating, lastMousePos).Draw(graphicsDevice, basicEffect, Color.Red);
@@ -58,10 +58,20 @@ namespace Game1.Modules
                 }
                 else
                 {
-                    points.Add(creating);
-                    points.Add(lastMousePos);
-                    lines.Add(new Line(creating, lastMousePos));
-                    creating = null;
+                    if (creating == lastMousePos)
+                    {
+                        //delete
+                        points.Remove(creating);
+                        lines = lines.Where(x => x.p1 != creating && x.p2 != creating).ToList();
+                        creating = null;
+                    }
+                    else
+                    {
+                        points.Add(creating);
+                        points.Add(lastMousePos);
+                        lines.Add(new Line(creating, lastMousePos));
+                        creating = null;
+                    }
                 }
             }
             prevLeftState = mouseState.LeftButton;
