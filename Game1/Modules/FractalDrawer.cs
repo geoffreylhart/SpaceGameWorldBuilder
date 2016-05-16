@@ -11,6 +11,27 @@ using System.Text;
 
 namespace Game1.Modules
 {
+    // Plane : we need to be able to bind drawing commands with keys/mouse actions easily, and seperate that logic well
+    // Current actions and bindings:
+    // - Delete point and attached lines : left double click a point
+    // - Add line : left click two points
+    // Which dont combine very intuitively, so instead let's outline what our actions need....
+    // - Create point: a position
+    // - Create line: two points
+    // - Delete point and attaches lines: a point
+    // - Create bezier: a line and a point, or 3 points
+    // - move point: a point and a new position
+    // Selection can be a completely different thing
+    // Proposal:
+    // Create point: Left click NEW
+    // Create line: Left click DRAG AND DROP from NEW to NEW, or POINT to POINT, or NEW to POINT, or POINT to NEW
+    // Move point: 
+    // Modify line to make it a bezier: LEFT CLICK DRAG AND DROP from LINE to NEW POINT
+    // SELECT MODE:
+    // Start-over Select - left click and drag bounding box
+    // Add select - hold shift + left click and drag bounding box
+    // Delete point and attached lines (if bezier, just make normal line): Hit DELETE while selected
+    // SELECT Special - modify any shared attributes amongst select items at any time
     class FractalDrawer : IModule
     {
         List<Line> lines = new List<Line>();
