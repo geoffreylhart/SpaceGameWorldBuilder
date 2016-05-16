@@ -9,8 +9,8 @@ namespace Game1.Geom
 {
     class Line
     {
-        private Point2D p1;
-        private Point2D p2;
+        internal Point2D p1;
+        internal Point2D p2;
 
         public Line(Point2D p1, Point2D p2)
         {

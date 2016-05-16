@@ -12,7 +12,8 @@ namespace Game1
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        IModule[] modules = new IModule[] { new GoogleMapSampler(), new FractalDrawer() };
+        static FractalDrawer geometry = FractalDrawer.Load(@"..\..\..\Data\geometry.data");
+        IModule[] modules = new IModule[] { new GoogleMapSampler(), geometry };
         int moduleSelected = 1;
         float cameraSpeed;
         Vector3 cameraOffset, cameraVelocity;
@@ -68,7 +69,10 @@ namespace Game1
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                geometry.Save(@"..\..\..\Data\geometry.data");
                 Exit();
+            }
 
 
             KeyboardState keyState = Keyboard.GetState();

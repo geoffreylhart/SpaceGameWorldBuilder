@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -74,6 +75,56 @@ namespace Game1.Modules
                     minDist = dist;
                     lastMousePos = point;
                 }
+            }
+        }
+
+        internal void Save(string file)
+        {
+            Stream stream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.None);
+            using (var writer = new BinaryWriter(stream))
+            {
+                Point2D[] pointArray = points.ToArray();
+                Dictionary<Point2D, int> indexHash = new Dictionary<Point2D, int>();
+                writer.Write(pointArray.Length);
+                for(int i=0; i<pointArray.Length; i++){
+                    writer.Write(pointArray[i].pos.X);
+                    writer.Write(pointArray[i].pos.Y);
+                    writer.Write(pointArray[i].pos.Z);
+                    indexHash.Add(pointArray[i], i);
+                }
+                writer.Write(lines.Count);
+                foreach (var line in lines)
+                {
+                    writer.Write(indexHash[line.p1]);
+                    writer.Write(indexHash[line.p2]);
+                }
+            }
+        }
+
+        internal static FractalDrawer Load(string file)
+        {
+            if (File.Exists(file))
+            {
+                FractalDrawer newGeom = new FractalDrawer();
+                Stream stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None);
+                using (BinaryReader reader = new BinaryReader(stream))
+                {
+                    Point2D[] pointArray = new Point2D[reader.ReadInt32()];
+                    for (int i = 0; i < pointArray.Length; i++)
+                    {
+                        pointArray[i] = new Point2D(new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()));
+                        newGeom.points.Add(pointArray[i]);
+                    }
+                    int lineCount = reader.ReadInt32();
+                    for (int i = 0; i < lineCount; i++)
+                    {
+                        newGeom.lines.Add(new Line(pointArray[reader.ReadInt32()], pointArray[reader.ReadInt32()]));
+                    }
+                }
+                return newGeom;
+            }
+            {
+                return new FractalDrawer();
             }
         }
     }
