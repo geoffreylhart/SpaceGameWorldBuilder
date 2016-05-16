@@ -28,6 +28,7 @@ namespace Game1
         }
         protected override void Initialize()
         {
+            GlobalTextures.LoadContent(Content);
             foreach (IModule module in modules)
             {
                 module.Initialize(Content, GraphicsDevice);
