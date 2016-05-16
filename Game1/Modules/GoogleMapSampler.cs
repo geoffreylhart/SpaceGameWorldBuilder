@@ -32,7 +32,7 @@ namespace Game1.Modules
             // load previously saved bgs
             foreach (string file in Directory.EnumerateFiles(@"..\..\..\earth"))
             {
-                if (!file.Contains("global"))
+                if (!file.Contains("global") && file.EndsWith(".png"))
                 {
                     String[] split = file.Split(new[] { '+' });
                     double longitude = (double.Parse(split[0].Substring(15)) / 360 + 0.5);
@@ -56,18 +56,17 @@ namespace Game1.Modules
             return Math.Log(Math.Tan(lat / 2 + Math.PI / 4)) / (Math.PI * 2) + 0.5;
         }
 
-        internal override void Draw(GraphicsDevice GraphicsDevice, BasicEffect basicEffect)
+        internal override void Draw(GraphicsDevice graphicsDevice, BasicEffect basicEffect)
         {
             foreach (ImageWrapper image in imageWrappers)
             {
-                image.Draw(GraphicsDevice, basicEffect);
+                image.Draw(graphicsDevice, basicEffect);
             }
         }
 
         private static ButtonState prevLeftState;
         internal override void Update(Vector3 relMousePos, double scale)
         {
-
             MouseState mouseState = Mouse.GetState();
             if (mouseState.LeftButton == ButtonState.Pressed && prevLeftState == ButtonState.Released)
             {

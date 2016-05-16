@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Game1.Geom;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,11 @@ namespace Game1.Modules
 {
     class FractalDrawer : IModule
     {
+        List<Line> lines = new List<Line>();
+        HashSet<Point2D> points = new HashSet<Point2D>();
+        Point2D creating = null;
+        Point2D lastMousePos = null;
+
         internal override string GetIconName()
         {
             return "icons/geom";
@@ -20,12 +27,54 @@ namespace Game1.Modules
             base.Initialize(content, graphicsDevice);
         }
 
-        internal override void Draw(GraphicsDevice GraphicsDevice, BasicEffect basicEffect)
+        internal override void Draw(GraphicsDevice graphicsDevice, BasicEffect basicEffect)
         {
+            basicEffect.VertexColorEnabled = true;
+            foreach(Line line in lines){
+                line.Draw(graphicsDevice, basicEffect, Color.White);
+            }
+            foreach (Point2D point in points)
+            {
+                point.Draw(graphicsDevice, basicEffect, Color.White);
+            }
+            if (creating != null && lastMousePos != null)
+            {
+                new Line(creating, lastMousePos).Draw(graphicsDevice, basicEffect, Color.Red);
+            }
+            basicEffect.VertexColorEnabled = false;
         }
 
+        private static ButtonState prevLeftState;
         internal override void Update(Vector3 relMousePos, double scale)
         {
+            MouseState mouseState = Mouse.GetState();
+            if (prevLeftState.Equals(ButtonState.Pressed) && mouseState.LeftButton.Equals(ButtonState.Released))
+            {
+                Point2D newPoint = new Point2D(relMousePos);
+                double minDist = double.MaxValue;
+                foreach (Point2D point in points)
+                {
+                    double dist = Vector3.Distance(newPoint.pos, point.pos)*scale;
+                    if (dist < 0.03 && dist < minDist)
+                    {
+                        minDist = dist;
+                        newPoint = point;
+                    }
+                }
+                if (creating == null)
+                {
+                    creating = newPoint;
+                }
+                else
+                {
+                    points.Add(creating);
+                    points.Add(newPoint);
+                    lines.Add(new Line(creating, newPoint));
+                    creating = null;
+                }
+            }
+            prevLeftState = mouseState.LeftButton;
+            lastMousePos = new Point2D(relMousePos);
         }
     }
 }

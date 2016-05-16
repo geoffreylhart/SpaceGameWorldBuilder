@@ -20,7 +20,7 @@ namespace Game1.Modules
             iconTexture = content.Load<Texture2D>(GetIconName());
         }
 
-        internal abstract void Draw(GraphicsDevice GraphicsDevice, BasicEffect basicEffect);
+        internal abstract void Draw(GraphicsDevice graphicsDevice, BasicEffect basicEffect);
 
         internal abstract void Update(Vector3 relMousePos, double scale);
 
