@@ -23,8 +23,6 @@ namespace Game1.Modules
 
         internal override void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
         {
-            base.Initialize(content, graphicsDevice);
-
             // add basic world background
             mainMapWrapper = new ImageWrapper(@"..\..\..\earth\global.png", 0, 0, 1, 1);
             imageWrappers.Add(mainMapWrapper);

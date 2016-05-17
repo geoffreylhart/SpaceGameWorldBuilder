@@ -15,10 +15,7 @@ namespace Game1.Modules
 
         private Texture2D iconTexture;
 
-        internal virtual void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
-        {
-            iconTexture = content.Load<Texture2D>(GetIconName());
-        }
+        internal virtual void Initialize(ContentManager content, GraphicsDevice graphicsDevice) { }
 
         internal abstract void Draw(GraphicsDevice graphicsDevice, BasicEffect basicEffect);
 

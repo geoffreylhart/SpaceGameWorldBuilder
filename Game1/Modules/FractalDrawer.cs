@@ -1,4 +1,5 @@
-﻿using Game1.Geom;
+﻿using Game1.Drawables;
+using Game1.Geom;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,6 +39,7 @@ namespace Game1.Modules
         HashSet<Point2D> points = new HashSet<Point2D>();
         Point2D creating = null;
         Point2D lastMousePos = null;
+        IconCycler editMode;
 
         internal override string GetIconName()
         {
@@ -46,7 +48,7 @@ namespace Game1.Modules
 
         internal override void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
         {
-            base.Initialize(content, graphicsDevice);
+            editMode = new IconCycler(content, 1, "icons/select", "icons/edit");
         }
 
         internal override void Draw(GraphicsDevice graphicsDevice, BasicEffect basicEffect)
@@ -65,6 +67,8 @@ namespace Game1.Modules
                 new Line(creating, lastMousePos).Draw(graphicsDevice, basicEffect, Color.Red);
             }
             basicEffect.VertexColorEnabled = false;
+            // draw icons
+            editMode.Draw(graphicsDevice, 0);
         }
 
         private static ButtonState prevLeftState;

@@ -1,10 +1,12 @@
-﻿using Game1.Modules;
+﻿using Game1.Drawables;
+using Game1.Modules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Game1
 {
@@ -14,6 +16,7 @@ namespace Game1
         SpriteBatch spriteBatch;
         static FractalDrawer geometry = FractalDrawer.Load(@"..\..\..\Data\geometry.data");
         IModule[] modules = new IModule[] { new GoogleMapSampler(), geometry };
+        IconCycler mainCycler;
         int moduleSelected = 1;
         float cameraSpeed;
         Vector3 cameraOffset, cameraVelocity;
@@ -34,6 +37,7 @@ namespace Game1
             {
                 module.Initialize(Content, GraphicsDevice);
             }
+            mainCycler = new IconCycler(Content, 0, modules.Select(m => m.GetIconName()));
             size = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height*2/3;
             // change size
             graphics.PreferredBackBufferWidth = size;  // set this value to the desired width of your window
@@ -131,24 +135,7 @@ namespace Game1
             {
                 module.Draw(GraphicsDevice, basicEffect);
             }
-            int iconSize = size / 20;
-            int iconSpacing = size / 100;
-            BasicEffect iconEffect = new BasicEffect(GraphicsDevice);
-            iconEffect.View = viewMatrix;
-            iconEffect.Projection = projectionMatrix;
-            iconEffect.World = Matrix.Identity;
-            iconEffect.TextureEnabled = true;
-            iconEffect.VertexColorEnabled = true;
-            using (var batch = new SpriteBatch(GraphicsDevice))
-            {
-                for (int i = 0; i < modules.Length; i++)
-                {
-                    batch.Begin(0, null, null, null, null, iconEffect);
-                    Rectangle rect = new Rectangle(iconSpacing+(iconSpacing+iconSize)*i, iconSpacing, iconSize, iconSize);
-                    batch.Draw(modules[i].GetIconTexture(), rect, (i == moduleSelected) ? new Color(255, 160, 160) : Color.White);
-                    batch.End();
-                }
-            }
+            mainCycler.Draw(GraphicsDevice, moduleSelected);
             base.Draw(gameTime);
         }
 
